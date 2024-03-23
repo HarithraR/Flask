@@ -1,0 +1,202 @@
+Note:
+If html templates present put it inside templates folder
+
+With html
+
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    name = 'John Doe'
+    return render_template('index.html', name=name)
+
+if __name__ == '__main__':
+    app.run()
+
+Index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask HTML Template</title>
+</head>
+<body>
+    <h1>Hello, {{ name }}!</h1>
+</body>
+</html>
+
+One html file form inputting and printing via flask
+
+main .py
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+@app.route('/', methods=['GET','POST'])
+def index():
+    name = 'John Doe'
+    location = None
+    
+    if request.method == 'POST':
+        location = request.form.get('location')
+        
+    return render_template('index.html', name=name, location=location)
+def location():
+    return location
+if __name__ == '__main__':
+    app.run(debug=True)
+
+Index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask HTML Template</title>
+</head>
+<body>
+    <h1>Hello, {{ name }}!</h1>
+    <form method="post">
+        <label for = "location">Location</label>
+        <input type = "text" id="location" name="location">
+        <button type = "submit">Submit</button>
+    </form>
+    
+    {% if location %}
+    <p>Your location: {{ location }}</p>
+    {% endif %}
+    
+</body>
+</html>
+
+Full stack:
+
+
+main.py
+
+from flask import Flask, render_template, request
+import pymysql
+
+app = Flask(__name__)
+
+# Initialize a PyMySQL connection
+connection = pymysql.connect(
+	host='localhost',
+	user='root',
+	password='',
+	db='details'
+)
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+	name = None
+	location = None
+    
+	if request.method == 'POST':
+    	name = request.form.get('name')
+    	location = request.form.get('location')
+   	 
+    	cursor = connection.cursor()
+    	cursor.execute("INSERT INTO info (name, location) VALUES (%s, %s)", (name, location))
+    	connection.commit()
+    	cursor.close()
+   	 
+	# cursor = connection.cursor()
+	# cursor.execute("SELECT * FROM info")
+	# rows = cursor.fetchall()
+	# cursor.close()
+    
+	return render_template('index.html', name=name, location=location)
+
+if __name__ == "__main__":
+	app.run(debug=True)
+
+Index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Flask HTML Template</title>
+</head>
+<body>
+	<form method="post">
+    	<label for = "name">Name</label>
+    	<input type = "text" id="name" name="name">
+    	<label for = "location">Location</label>
+    	<input type = "text" id="location" name="location">
+    	<button type = "submit">Submit</button>
+	</form>
+    
+	{% if location and name%}
+	<h1>Hello, {{ name }}!</h1>
+	<p>Your location: {{ location }}</p>
+	{% endif %}
+    
+</body>
+</html>
+
+
+With routing two or more html pages via flask
+
+1.Creating flask application
+
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+if __name__ == '__main__':
+    app.run()
+
+2.Creating html templates
+
+Home.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+</head>
+<body>
+    <h1>Welcome to the Home Page!</h1>
+</body>
+</html>
+
+About.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Page</title>
+</head>
+<body>
+    <h1>About Us</h1>
+    <p>This is the About page.</p>
+</body>
+</html>
+
+
+flask --app hello run --debug
