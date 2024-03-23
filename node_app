@@ -1,0 +1,186 @@
+Create a folder in VS Code
+
+Open terminal 
+Npm init -y
+npm install express request
+
+
+
+IN RAPID API
+Choose node(request)
+
+To package.json
+Add     "start": "node index.js"
+In the scripts
+
+
+
+
+TO RUN THIS GIVE
+
+ node index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Package.json
+
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.1",
+    "request": "^2.88.2"
+  }
+}
+
+
+
+
+index.js
+
+// index.js
+const express = require('express');
+const request = require('request');
+
+
+const app = express();
+
+
+const options = {
+  method: 'GET',
+  url: 'https://open-weather13.p.rapidapi.com/city/landon',
+  headers: {
+    'X-RapidAPI-Key': '6943792f91msh77572fb7fe59158p139cd0jsn46881f687d5c',
+    'X-RapidAPI-Host': 'open-weather13.p.rapidapi.com'
+  }
+};
+
+
+app.use(express.static(__dirname)); // Serves static files from the current directory
+
+
+app.get('/weather', (req, res) => {
+  request(options, function (error, response, body) {
+    if (error) {
+      res.status(500).send('Error fetching data');
+    } else {
+      res.send(body);
+    }
+  });
+});
+
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+
+
+
+Index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Information</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="weather-container">
+    <h1>Weather Information</h1>
+    <div id="weather-data"></div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+
+
+script.js
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/weather')
+      .then(response => response.json())
+      .then(data => {
+        const weatherDataElement = document.getElementById('weather-data');
+        const relevantData = {
+          'Temperature': `${data.main.temp}°C`,
+          'Feels Like': `${data.main.feels_like}°C`,
+          'Description': data.weather[0].description,
+          'Wind Speed': `${data.wind.speed} m/s`,
+          'Humidity': `${data.main.humidity}%`
+        };
+ 
+        Object.keys(relevantData).forEach(key => {
+          const div = document.createElement('div');
+          div.classList.add('weather-data-item');
+          div.innerHTML = `<span>${key}:</span> ${relevantData[key]}`;
+          weatherDataElement.appendChild(div);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching weather data:', error);
+      });
+  });
+ 
+
+
+Style.css
+
+/* Add your CSS styles here */
+.weather-container {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+ 
+  .weather-data-item {
+    margin-bottom: 10px;
+  }
+ 
+  .weather-data-item span {
+    font-weight: bold;
+  }
+ 
+
+
+
+
+
